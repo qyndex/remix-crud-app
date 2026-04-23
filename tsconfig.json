@@ -4,6 +4,12 @@
     "**/*.ts",
     "**/*.tsx"
   ],
+  "exclude": [
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "tests/**",
+    "e2e/**"
+  ],
   "compilerOptions": {
     "lib": [
       "DOM",
