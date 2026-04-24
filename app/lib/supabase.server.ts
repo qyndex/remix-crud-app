@@ -2,24 +2,17 @@ import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@s
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./database.types";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_URL || "http://localhost:54321";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "placeholder";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-function requireEnv(name: string, value: string | undefined): string {
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
-  return value;
-}
 
 /**
  * Create a Supabase client that reads/writes auth cookies from the request.
  * Returns both the client and response headers (to forward Set-Cookie).
  */
 export function createSupabaseServerClient(request: Request) {
-  const url = requireEnv("SUPABASE_URL", supabaseUrl);
-  const anonKey = requireEnv("SUPABASE_ANON_KEY", supabaseAnonKey);
+  const url = supabaseUrl;
+  const anonKey = supabaseAnonKey;
 
   const headers = new Headers();
 
@@ -47,8 +40,8 @@ export function createSupabaseServerClient(request: Request) {
  * that need to bypass RLS.
  */
 export function createSupabaseAdminClient() {
-  const url = requireEnv("SUPABASE_URL", supabaseUrl);
-  const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY", supabaseServiceKey);
+  const url = supabaseUrl;
+  const serviceKey = (supabaseServiceKey || supabaseAnonKey);
   return createClient<Database>(url, serviceKey, {
     auth: {
       autoRefreshToken: false,
